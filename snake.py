@@ -1,10 +1,10 @@
 
 #this section should be interpreted by Python 3.X
-from tkinter import *
-from tkinter.ttk import *
+from Tkinter import *
+
 import random
 import threading
-import queue
+import Queue
 import time
 
 class GUI(Tk):
@@ -33,7 +33,7 @@ class GUI(Tk):
                 elif task.get("points_earned"):
                     self.canvas.itemconfigure(self.points_earned,text="score.{}".format(task["points_earned"]))
                     self.queue.task_done()
-        except queue.Empty:
+        except Queue.Empty:
             if not self.is_game_over:
                 self.canvas.after(100,self.queue_handler)
 
@@ -72,7 +72,7 @@ class Snake(threading.Thread):
             self._delete()
         while not self.gui.is_game_over:
             self.queue.put({"move":self.snake_points})
-            time.sleep(0.5)
+            time.sleep(0.1)
             self.move()
     def key_pressed(self,e):
         self.direction=e.keysym
@@ -95,7 +95,7 @@ class Snake(threading.Thread):
             new_snake_point=last_x,(last_y+10)
         elif self.direction=="Left":
             new_snake_point=(last_x-10),last_y
-        elif self.direction=="Right":
+        elif self.direction=="Right" :
             new_snake_point=(last_x+10),last_y
         return new_snake_point
     def check_game_over(self,snake_point):
@@ -103,17 +103,17 @@ class Snake(threading.Thread):
         if not -5<x<505 or not -5<y<315 or snake_point in self.snake_points:
             self.queue.put({"game_over":True})
 
-def main():
-    q=queue.Queue()
-    gui=GUI(q)
-    gui.title("snake")
 
-    snake=Snake(gui,q)
-    gui.bind("<Key-Left>",snake.key_pressed)
-    gui.bind("<Key-Right>",snake.key_pressed)
-    gui.bind("<Key-Up>",snake.key_pressed)
-    gui.bind("<Key-Down>",snake.key_pressed)
-    gui.mainloop()
+q=Queue.Queue()
+gui=GUI(q)
+gui.title("snake")
 
-if __name__=="__main__":
-    main()
+snake=Snake(gui,q)
+gui.bind("<Key-Left>",snake.key_pressed)
+gui.bind("<Key-Right>",snake.key_pressed)
+gui.bind("<Key-Up>",snake.key_pressed)
+gui.bind("<Key-Down>",snake.key_pressed)
+gui.mainloop()
+
+
+
